@@ -1,14 +1,43 @@
-name: demo
-on: [push]
+name: Run Java app
+on: 
+  push:
+    branches:
+    - main
+  worflow_dispatch:
+   
 jobs: 
     first_job:
         runs-on: ubuntu-latest
         steps:
             - name: git checkout repo
               uses: actions/checkout@v4
+
             - name: welcome message
               run: echo "hello"
+
             - name: list_files
               run: ls
+
             - name: read file
               run: cat README.md
+
+            - name: set up Java
+              uses: actions/setup-java@v3
+              with:
+                distribution: 'temurin'
+                java-version: '17'
+
+            - name: Compile Java application
+              run: javac Welcomeapp.java
+        
+            - name: Run Java application
+              run: java Welcomeapp &
+
+            - name: Wait for server to start
+              run: sleep 2
+
+            - name: Test with curl
+              run: curl http://localhost:8080
+
+            - name: Sleep before exit
+              run: sleep 20
